@@ -1,0 +1,7 @@
+name = "flareip"
+compatibility_date = "2023-08-07"
+main = "dist/ip_worker.js"
+routes = [
+    "https://addr.se/*",
+    "https://ip.addr.se/*",
+]
