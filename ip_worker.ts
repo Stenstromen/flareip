@@ -13,6 +13,7 @@ interface GeoData {
   country_capital: string;
   latitude: string;
   longitude: string;
+  isp: string;
   time_zone: {
     name: string;
   };
@@ -54,6 +55,7 @@ Zip Code: ${geoData.zipcode}
 Country Capital: ${geoData.country_capital}
 Latitude: ${geoData.latitude}
 Longitude: ${geoData.longitude}
+ISP: ${geoData.isp}
 Timezone: ${geoData.time_zone.name}\n`;
       
       return new Response(formattedResponse, { 
