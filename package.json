@@ -8,9 +8,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "preview": "wrangler preview --watch",
-    "dev": "wrangler dev",
-    "publish": "wrangler publish"
+    "dev": "tsc && wrangler dev",
+    "publish": "tsc && wrangler publish"
   },
   "private": true
 }
