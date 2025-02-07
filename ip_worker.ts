@@ -19,6 +19,14 @@ interface GeoData {
   };
 }
 
+interface ASNData {
+  ip: string;
+  asn: string;
+  cidr: string;
+  organization: string;
+  country: string;
+}
+
 /**
  * Respond to the request
  * @param {Request} request
@@ -84,14 +92,43 @@ Client-SSL-Cipher: ${request.cf?.tlsCipher}\n`;
         status: 200,
         headers: { "Content-Type": "text/plain" },
       });
+    case "/asn":
+      const queryParams = new URLSearchParams(url.search);
+      const lookupIP = queryParams.get('ip') || clientIP;
+      
+
+      const asnResponse = await fetch(
+        `https://api.hackertarget.com/aslookup/?q=${lookupIP}`
+      );
+      const asnData = await asnResponse.text();
+      const asnDataArray: string[] = asnData.split(",");
+      const parsedAsnData: ASNData = {
+        ip: asnDataArray[0]?.replace(/"/g, "") || "",
+        asn: asnDataArray[1]?.replace(/"/g, "") || "",
+        cidr: asnDataArray[2]?.replace(/"/g, "") || "",
+        organization: asnDataArray[3]?.replace(/"/g, "") || "",
+        country: asnDataArray[4]?.replace(/"/g, "") || "",
+      };
+      const textResponse = `IP: ${parsedAsnData.ip}
+ASN: ${parsedAsnData.asn}
+CIDR: ${parsedAsnData.cidr}
+ORG: ${parsedAsnData.organization}
+Country: ${parsedAsnData.country}\n`;
+      console.log(textResponse);
+      return new Response(textResponse, {
+        status: 200,
+        headers: { "Content-Type": "text/plain" },
+      });
     case "/readme":
       return new Response(
-        "/       - Returns the client's IP address.\n" +
-          "/agent  - Returns the client's user agent.\n" +
-          "/geo    - Returns geolocation data for the client's IP address.\n" +
-          "/ssl    - Returns the client's SSL/TLS information.\n" +
-          "/headers- Returns the client's request headers.\n" +
-          "/readme - Returns this readme message.\n",
+        "/            - Returns the client's IP address.\n" +
+          "/agent       - Returns the client's user agent.\n" +
+          "/geo         - Returns geolocation data for the client's IP address.\n" +
+          "/ssl         - Returns the client's SSL/TLS information.\n" +
+          "/headers     - Returns the client's request headers.\n" +
+          "/asn         - Returns the client IP's ASN information.\n" +
+          "/asn?ip={ip} - Returns the ASN information for the given IP address.\n" +
+          "/readme      - Returns this readme message.\n",
         { status: 200 }
       );
     default:

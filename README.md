@@ -4,8 +4,8 @@
 
 Cloudflare Worker to get the client IP address.
 
-## Build and Publish
+## Build and Deploy
 
 ```bash
-npm run publish
+npm run deploy
 ```
