@@ -119,6 +119,22 @@ Country: ${parsedAsnData.country}\n`;
         status: 200,
         headers: { "Content-Type": "text/plain" },
       });
+    case "/date":
+      const now = new Date();
+      const utcTime = now.toISOString();
+      const swedishTime = now.toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' });
+      const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
+      const pastDaysOfYear = (now.getTime() - firstDayOfYear.getTime()) / 86400000;
+      const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+      
+      const dateResponse = `Swedish (Europe/Stockholm): ${swedishTime}
+UTC: ${utcTime}
+Week number: ${weekNumber}\n`;
+
+      return new Response(dateResponse, {
+        status: 200,
+        headers: { "Content-Type": "text/plain" },
+      });
     case "/readme":
       return new Response(
         "/            - Returns the client's IP address.\n" +
@@ -128,6 +144,7 @@ Country: ${parsedAsnData.country}\n`;
           "/headers     - Returns the client's request headers.\n" +
           "/asn         - Returns the client IP's ASN information.\n" +
           "/asn?ip={ip} - Returns the ASN information for the given IP address.\n" +
+          "/date        - Returns the current date and time in Swedish and UTC timezones, with week number.\n" +
           "/readme      - Returns this readme message.\n",
         { status: 200 }
       );
