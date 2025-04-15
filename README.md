@@ -1,5 +1,7 @@
 # FlareIP
 
+![FlareIP Logo](flareip.webp)
+
 A powerful Cloudflare Worker that provides detailed information about client connections, IP geolocation, ASN details, and more.
 
 ## Table of Contents
