@@ -1,6 +1,6 @@
 {
   "name": "flareip",
-  "version": "v0.0.2",
+  "version": "v0.0.3",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250428.0",
     "typescript": "^5.8.3",
