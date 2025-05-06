@@ -131,10 +131,75 @@ Country: ${parsedAsnData.country}\n`;
 UTC: ${utcTime}
 Week number: ${weekNumber}\n`;
 
-      return new Response(dateResponse, {
-        status: 200,
-        headers: { "Content-Type": "text/plain" },
-      });
+      const htmlDateResponse = `
+      <html>
+        <head>
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+              display: flex;
+              flex-direction: column;
+              height: 100vh;
+              font-family: sans-serif;
+            }
+            .week-display {
+              flex: 1;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #004466;
+              color: #66ccff;
+              font-size: 20vw;
+              font-weight: bold;
+            }
+            .date-info {
+              padding: 10px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="week-display">${weekNumber}</div>
+          <div class="date-info">
+            <p>${dateResponse}</p>
+          </div>
+        </body>
+      </html>`;
+
+      const textBasedUserAgents = [
+        "curl",
+        "wget",
+        "httpie",
+        "lynx",
+        "w3m",
+        "links",
+        "elinks",
+        "aria2",
+        "PowerShell",
+        "python-requests",
+        "bot",
+        "crawler",
+      ];
+
+      if (
+        textBasedUserAgents.some((agent) =>
+          request.headers
+            .get("user-agent")
+            ?.toLowerCase()
+            .includes(agent.toLowerCase())
+        )
+      ) {
+        return new Response(dateResponse, {
+          status: 200,
+          headers: { "Content-Type": "text/plain" },
+        });
+      } else {
+        return new Response(htmlDateResponse, {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
+        });
+      }
+
     case "/readme":
       return new Response(
         "/            - Returns the client's IP address.\n" +
