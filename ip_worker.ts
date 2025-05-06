@@ -46,7 +46,7 @@ async function handleRequest(request: Request): Promise<Response> {
         return new Response("IP Address Unknown", { status: 400 });
       }
       const geoResponse = await fetch(
-        `https://api.ipgeolocation.io/ipgeo?apiKey=${IPGEOLOCATION_KEY}&ip=${clientIP}`
+        `https://api.ipgeolocation.io/v2/ipgeo?apiKey=${IPGEOLOCATION_KEY}&ip=${clientIP}`
       );
       if (!geoResponse.ok) {
         return new Response("Geo API Error", { status: geoResponse.status });
