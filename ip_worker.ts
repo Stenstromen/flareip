@@ -4,18 +4,16 @@ addEventListener("fetch", (event: FetchEvent) => {
 
 interface GeoData {
   ip: string;
-  country_name: string;
-  country_code2: string;
-  is_eu: boolean;
-  state_prov: string;
-  state_code: string;
-  zipcode: string;
-  country_capital: string;
-  latitude: string;
-  longitude: string;
-  isp: string;
-  time_zone: {
-    name: string;
+  location: {
+    country_name: string;
+    country_code2: string;
+    is_eu: boolean;
+    state_prov: string;
+    state_code: string;
+    zipcode: string;
+    country_capital: string;
+    latitude: string;
+    longitude: string;
   };
 }
 
@@ -54,17 +52,15 @@ async function handleRequest(request: Request): Promise<Response> {
       const geoData: GeoData = await geoResponse.json();
 
       const formattedResponse = `IP: ${geoData.ip}
-Country: ${geoData.country_name}
-Country (ISO code): ${geoData.country_code2}
-Is EU?: ${geoData.is_eu}
-State: ${geoData.state_prov}
-State Code: ${geoData.state_code}
-Zip Code: ${geoData.zipcode}
-Country Capital: ${geoData.country_capital}
-Latitude: ${geoData.latitude}
-Longitude: ${geoData.longitude}
-ISP: ${geoData.isp}
-Timezone: ${geoData.time_zone.name}\n`;
+Country: ${geoData.location.country_name}
+Country (ISO code): ${geoData.location.country_code2}
+Is EU?: ${geoData.location.is_eu}
+State: ${geoData.location.state_prov}
+State Code: ${geoData.location.state_code}
+Zip Code: ${geoData.location.zipcode}
+Country Capital: ${geoData.location.country_capital}
+Latitude: ${geoData.location.latitude}
+Longitude: ${geoData.location.longitude}\n`;
 
       return new Response(formattedResponse, {
         status: 200,
@@ -94,8 +90,7 @@ Client-SSL-Cipher: ${request.cf?.tlsCipher}\n`;
       });
     case "/asn":
       const queryParams = new URLSearchParams(url.search);
-      const lookupIP = queryParams.get('ip') || clientIP;
-      
+      const lookupIP = queryParams.get("ip") || clientIP;
 
       const asnResponse = await fetch(
         `https://api.hackertarget.com/aslookup/?q=${lookupIP}`
@@ -122,11 +117,16 @@ Country: ${parsedAsnData.country}\n`;
     case "/date":
       const now = new Date();
       const utcTime = now.toISOString();
-      const swedishTime = now.toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' });
+      const swedishTime = now.toLocaleString("sv-SE", {
+        timeZone: "Europe/Stockholm",
+      });
       const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
-      const pastDaysOfYear = (now.getTime() - firstDayOfYear.getTime()) / 86400000;
-      const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-      
+      const pastDaysOfYear =
+        (now.getTime() - firstDayOfYear.getTime()) / 86400000;
+      const weekNumber = Math.ceil(
+        (pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7
+      );
+
       const dateResponse = `Swedish (Europe/Stockholm): ${swedishTime}
 UTC: ${utcTime}
 Week number: ${weekNumber}\n`;
