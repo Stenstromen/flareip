@@ -27,17 +27,17 @@ A powerful Cloudflare Worker that provides detailed information about client con
 
 ## API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/` | Returns the client's IP address |
-| `/agent` | Returns the client's user agent string |
-| `/geo` | Provides detailed geolocation data including country, state, coordinates, and ISP information |
-| `/ssl` | Shows the client's SSL/TLS protocol version and cipher |
-| `/headers` | Lists all request headers sent by the client |
-| `/asn` | Returns ASN information for the client's IP |
-| `/asn?ip={ip}` | Looks up ASN information for a specific IP address |
-| `/date` | Shows current time in Swedish and UTC timezones with week number |
-| `/readme` | Displays API documentation |
+| Endpoint       | Description                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `/`            | Returns the client's IP address                                                                                         |
+| `/agent`       | Returns the client's user agent string                                                                                  |
+| `/geo`         | Provides detailed geolocation data including country, state, coordinates, and ISP information                           |
+| `/ssl`         | Shows the client's SSL/TLS protocol version and cipher                                                                  |
+| `/headers`     | Lists all request headers sent by the client                                                                            |
+| `/asn`         | Returns ASN information for the client's IP                                                                             |
+| `/asn?ip={ip}` | Looks up ASN information for a specific IP address                                                                      |
+| `/date`        | Shows current time in Swedish and UTC timezones with week number (html and text, text only if user-agent is text-based) |
+| `/readme`      | Displays API documentation                                                                                              |
 
 ## Prerequisites
 
