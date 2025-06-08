@@ -10,6 +10,9 @@ A powerful Cloudflare Worker that provides detailed information about client con
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [API Endpoints](#api-endpoints)
+  - [URL Shortening](#url-shortening)
+    - [Usage Examples](#usage-examples)
+    - [Managing Short URLs](#managing-short-urls)
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
   - [Installation](#installation)
@@ -24,6 +27,7 @@ A powerful Cloudflare Worker that provides detailed information about client con
 - 🌐 ASN (Autonomous System Number) lookup
 - ⏰ Timezone information
 - 🔍 User agent details
+- 🔗 URL shortening service with 4-character hex IDs
 
 ## API Endpoints
 
@@ -37,7 +41,33 @@ A powerful Cloudflare Worker that provides detailed information about client con
 | `/asn`         | Returns ASN information for the client's IP                                                                             |
 | `/asn?ip={ip}` | Looks up ASN information for a specific IP address                                                                      |
 | `/date`        | Shows current time in Swedish and UTC timezones with week number (html and text, text only if user-agent is text-based) |
+| `/ln/{id}`     | Redirects to the URL associated with the given 4-character hex ID (URL shortening service)                             |
 | `/readme`      | Displays API documentation                                                                                              |
+
+## URL Shortening
+
+The service includes a built-in URL shortening feature that uses 4-character hexadecimal IDs. Short URLs follow the pattern `/ln/{id}` where `{id}` is a 1-4 character hex string (0-9, a-f).
+
+### Usage Examples
+
+- `/ln/a1b2` → Redirects to Google
+- `/ln/04ac` → Redirects to peppoj.net
+
+### Managing Short URLs
+
+URL mappings are configured in the `urlMappings` constant within the worker code. To add new short URLs:
+
+1. Use the provided utility script to generate unique hex IDs:
+
+   ```bash
+   node generate_hex_id.js https://example.com
+   ```
+
+2. Copy the generated mapping to the `urlMappings` constant in `ip_worker.ts`
+
+3. Redeploy the worker
+
+The system supports up to 65,536 unique short URLs (hex range 0000-ffff).
 
 ## Prerequisites
 
