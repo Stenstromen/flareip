@@ -2,6 +2,14 @@ addEventListener("fetch", (event: FetchEvent) => {
   event.respondWith(handleRequest(event.request));
 });
 
+const urlMappings: Record<string, string> = {
+  "a1b2": "https://www.google.com",
+  "04ac": "https://www.peppoj.net",
+  "4e94": "https://www.internetstiftelsen.se",
+  "18ec": "https://github.com/Stenstromen/kubectx-edit",
+  "dd2a": "https://github.com/Stenstromen"
+};
+
 interface GeoData {
   ip: string;
   location: {
@@ -210,10 +218,25 @@ Week number: ${weekNumber}\n`;
           "/asn         - Returns the client IP's ASN information.\n" +
           "/asn?ip={ip} - Returns the ASN information for the given IP address.\n" +
           "/date        - Returns the current date and time in Swedish and UTC timezones, with week number.\n" +
+          "/ln/{id}     - Redirects to the URL associated with the given 4-character hex ID.\n" +
           "/readme      - Returns this readme message.\n",
         { status: 200 }
       );
     default:
+      const pathMatch = url.pathname.match(/^\/ln\/([a-f0-9]{1,4})$/i);
+      if (pathMatch) {
+        const hexId = pathMatch[1]?.toLowerCase() || "";
+        const targetUrl = urlMappings[hexId];
+
+        if (targetUrl) {
+          return Response.redirect(targetUrl, 302);
+        } else {
+          return new Response(`Short URL not found: ${hexId}\n`, {
+            status: 404,
+          });
+        }
+      }
+
       return new Response("Not found\n", { status: 404 });
   }
 }
