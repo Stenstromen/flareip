@@ -1,10 +1,10 @@
 {
   "name": "flareip",
-  "version": "v0.2.6",
+  "version": "v0.2.7",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251008.0",
-    "typescript": "^5.9.3",
-    "wrangler": "4.42.2"
+    "@cloudflare/workers-types": "^4.20260611.1",
+    "typescript": "^6.0.3",
+    "wrangler": "4.99.0"
   },
   "scripts": {
     "build": "tsc",
