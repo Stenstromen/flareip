@@ -28,6 +28,7 @@ A powerful Cloudflare Worker that provides detailed information about client con
 - ⏰ Timezone information
 - 🔍 User agent details
 - 🔗 URL shortening service with 4-character hex IDs
+- 🧲 BitTorrent tracker IP check (IPv4 and IPv6)
 
 ## API Endpoints
 
@@ -42,6 +43,8 @@ A powerful Cloudflare Worker that provides detailed information about client con
 | `/asn?ip={ip}` | Looks up ASN information for a specific IP address                                                                      |
 | `/date`        | Shows current time in Swedish and UTC timezones with week number (html and text, text only if user-agent is text-based) |
 | `/ln/{id}`     | Redirects to the URL associated with the given 4-character hex ID (URL shortening service)                             |
+| `/bt`          | BitTorrent HTTPS tracker IP check. Add the magnet to your client; tracker status shows `IP: <ipv4>, <ipv6>`            |
+| `/bt.torrent`  | Dummy torrent file for the same IP check                                                                               |
 | `/readme`      | Displays API documentation                                                                                              |
 
 ## URL Shortening
@@ -68,6 +71,16 @@ URL mappings are configured in the `urlMappings` constant within the worker code
 3. Redeploy the worker
 
 The system supports up to 65,536 unique short URLs (hex range 0000-ffff).
+
+## BitTorrent IP Check
+
+`/bt` is an HTTPS [BitTorrent tracker](https://www.bittorrent.org/beps/bep_0003.html) (HTTP GET + bencoded response), the same approach used by whatismyip.net and ipMagnet. It is not the peer-to-peer wire protocol, and UDP trackers are not supported on Cloudflare Workers.
+
+1. Open `/bt` and add the magnet link to your BitTorrent client (or download `/bt.torrent`).
+2. In the client, open the torrent's trackers tab. The tracker replies with a failure reason such as `IP: 203.0.113.1, 2001:db8::1`.
+3. Dual-stack clients announce once over IPv4 and once over IPv6. If only one address appears, force a reannounce.
+
+The magnet on `/bt` is unique to that page so the browser view can show the same addresses. `/bt.torrent` is a shared dummy file; use the client's tracker status for that path.
 
 ## Prerequisites
 
