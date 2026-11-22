@@ -29,5 +29,7 @@
     "types": ["@cloudflare/workers-types"],
     "forceConsistentCasingInFileNames": true,
     "noPropertyAccessFromIndexSignature": true
-  }
+  },
+  "include": ["ip_worker.ts"],
+  "exclude": ["node_modules", "dist", "tests", "vitest.config.ts"]
 }

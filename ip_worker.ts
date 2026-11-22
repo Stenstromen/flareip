@@ -1,6 +1,6 @@
-addEventListener("fetch", (event: FetchEvent) => {
-  event.respondWith(handleRequest(event.request));
-});
+export interface Env {
+  IPGEOLOCATION_KEY: string;
+}
 
 const urlMappings: Record<string, string> = {
   "a1b2": "https://www.google.com",
@@ -33,7 +33,7 @@ interface ASNData {
   country: string;
 }
 
-interface BtIpRecord {
+export interface BtIpRecord {
   ipv4?: string;
   ipv6?: string;
 }
@@ -68,8 +68,12 @@ const BT_DUALSTACK_WAIT_MS = 800;
 /**
  * Respond to the request
  * @param {Request} request
+ * @param {Env} env
  */
-async function handleRequest(request: Request): Promise<Response> {
+export async function handleRequest(
+  request: Request,
+  env: Env
+): Promise<Response> {
   const url = new URL(request.url);
   const clientIP = request.headers.get("cf-connecting-ip") || "Unknown";
   const btPath = url.pathname.replace(/\/+$/, "") || "/";
@@ -94,7 +98,7 @@ async function handleRequest(request: Request): Promise<Response> {
         return new Response("IP Address Unknown", { status: 400 });
       }
       const geoResponse = await fetch(
-        `https://api.ipgeolocation.io/v2/ipgeo?apiKey=${IPGEOLOCATION_KEY}&ip=${clientIP}`
+        `https://api.ipgeolocation.io/v2/ipgeo?apiKey=${env.IPGEOLOCATION_KEY}&ip=${clientIP}`
       );
       if (!geoResponse.ok) {
         return new Response("Geo API Error", { status: geoResponse.status });
@@ -263,7 +267,7 @@ Week number: ${weekNumber}\n`;
   }
 }
 
-function isTextBasedUserAgent(request: Request): boolean {
+export function isTextBasedUserAgent(request: Request): boolean {
   const userAgent = request.headers.get("user-agent")?.toLowerCase();
   if (!userAgent) {
     return false;
@@ -273,7 +277,7 @@ function isTextBasedUserAgent(request: Request): boolean {
   );
 }
 
-function concatBytes(chunks: Uint8Array[]): Uint8Array {
+export function concatBytes(chunks: Uint8Array[]): Uint8Array {
   let total = 0;
   for (const chunk of chunks) {
     total += chunk.length;
@@ -287,7 +291,7 @@ function concatBytes(chunks: Uint8Array[]): Uint8Array {
   return out;
 }
 
-function bencode(value: BencodeValue): Uint8Array {
+export function bencode(value: BencodeValue): Uint8Array {
   const encoder = new TextEncoder();
   if (typeof value === "string") {
     const bytes = encoder.encode(value);
@@ -321,7 +325,7 @@ function bencode(value: BencodeValue): Uint8Array {
   return concatBytes(parts);
 }
 
-function bytesToHex(bytes: Uint8Array): string {
+export function bytesToHex(bytes: Uint8Array): string {
   let hex = "";
   for (let i = 0; i < bytes.length; i++) {
     const byte = bytes[i];
@@ -339,7 +343,7 @@ function randomInfoHashHex(): string {
   return bytesToHex(bytes);
 }
 
-function getRawQueryParam(search: string, name: string): string | null {
+export function getRawQueryParam(search: string, name: string): string | null {
   const query = search.startsWith("?") ? search.slice(1) : search;
   if (query.length === 0) {
     return null;
@@ -355,7 +359,7 @@ function getRawQueryParam(search: string, name: string): string | null {
   return null;
 }
 
-function decodeQueryValueToBytes(encoded: string): Uint8Array {
+export function decodeQueryValueToBytes(encoded: string): Uint8Array {
   const bytes: number[] = [];
   for (let i = 0; i < encoded.length; i++) {
     const ch = encoded[i];
@@ -379,18 +383,18 @@ function decodeQueryValueToBytes(encoded: string): Uint8Array {
   return new Uint8Array(bytes);
 }
 
-function isIPv6Address(ip: string): boolean {
+export function isIPv6Address(ip: string): boolean {
   return ip.includes(":");
 }
 
-function applyBtIp(record: BtIpRecord, ip: string): BtIpRecord {
+export function applyBtIp(record: BtIpRecord, ip: string): BtIpRecord {
   if (isIPv6Address(ip)) {
     return { ...record, ipv6: ip };
   }
   return { ...record, ipv4: ip };
 }
 
-function formatBtIpMessage(record: BtIpRecord, fallback: string): string {
+export function formatBtIpMessage(record: BtIpRecord, fallback: string): string {
   const ips: string[] = [];
   if (record.ipv4 !== undefined) {
     ips.push(record.ipv4);
@@ -472,7 +476,7 @@ function btAnnounceUrl(url: URL): string {
   return `${url.protocol}//${url.host}/bt`;
 }
 
-function buildMagnet(infoHashHex: string, url: URL): string {
+export function buildMagnet(infoHashHex: string, url: URL): string {
   const displayName = encodeURIComponent(BT_TORRENT_NAME);
   const tracker = encodeURIComponent(btAnnounceUrl(url));
   return `magnet:?xt=urn:btih:${infoHashHex}&dn=${displayName}&tr=${tracker}`;
@@ -505,7 +509,7 @@ function serveBtTorrent(url: URL): Response {
   });
 }
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -667,4 +671,12 @@ async function handleBitTorrentRequest(
   );
 }
 
-declare const IPGEOLOCATION_KEY: string;
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    _ctx: ExecutionContext
+  ): Promise<Response> {
+    return handleRequest(request, env);
+  },
+};

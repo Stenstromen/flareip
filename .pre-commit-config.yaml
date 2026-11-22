@@ -1,0 +1,9 @@
+---
+repos:
+  - repo: local
+    hooks:
+      - id: test
+        name: Running Vitest Tests
+        entry: npm run test
+        language: node
+        pass_filenames: false
