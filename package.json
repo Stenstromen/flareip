@@ -1,6 +1,6 @@
 {
   "name": "flareip",
-  "version": "v0.2.9",
+  "version": "v0.3.1",
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.9.0",
     "@cloudflare/workers-types": "^5.20261120.1",
